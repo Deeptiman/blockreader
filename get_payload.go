@@ -12,21 +12,14 @@ import (
 )
 
 
-func GetPayloadJson(envelope *common.Envelope) (Payload, error){
+func GetPayloadJson(payload *common.Payload) (Payload, error){
 
- 	//Retrieve the Payload from the Envelope
 	/*
 		type Payload struct {
 			Header *Header 
 			Data   []byte 
 		}
 	*/
-
-	payload := &common.Payload{}
-	err := proto.Unmarshal(envelope.Payload, payload)
-	if err != nil {
-		return Payload{}, errors.WithMessage(err,"unmarshaling Payload error: ")
-	}
 
 	/*
 		type Header struct {
@@ -105,8 +98,11 @@ func GetChannelHeader(payload *common.Payload) (ChannelHeader, error) {
 			ChaincodeId: chaincodeIdJson,	
 		}
 
+		HeaderType := [7]string{"MESSAGE", "CONFIG", "CONFIG_UPDATE", "ENDORSER_TRANSACTION",
+						"ORDERER_TRANSACTION", "DELIVER_SEEK_INFO", "CHAINCODE_PACKAGE"}
+
 		channelHeaderJson := ChannelHeader{
-			Type: 		channelHeader.Type,
+			Type: 		HeaderType[channelHeader.Type],
 			Version:	channelHeader.Version,
 			ChannelId:	channelHeader.ChannelId,
 			TxId:		channelHeader.TxId,
@@ -139,37 +135,39 @@ func GetSignatureHeader(payload *common.Payload) (SignatureHeader, error){
 			return SignatureHeader{}, errors.WithMessage(err,"unmarshaling Creator error: ")
 		}
 
-		uEnc := base64.URLEncoding.EncodeToString([]byte(creator.IdBytes))
-
-		// Base64 Url Decoding
-		certText, err := base64.URLEncoding.DecodeString(uEnc)
-		if err != nil {
-			return SignatureHeader{}, errors.WithMessage(err,"Error decoding string: ")
-		}
+		// Extracting Identifier Certificate
 		
-		end, _ := pem.Decode([]byte(string(certText)))
-		if end == nil {
-			return SignatureHeader{}, errors.New("Error Pem decoding: ")
-		}
-		cert, err := x509.ParseCertificate(end.Bytes)
-		if err != nil {
-			return SignatureHeader{}, errors.New("failed to parse certificate:: ")
-		}		
+			uEnc := base64.URLEncoding.EncodeToString([]byte(creator.IdBytes))
 
-		certificateJson :=	Certificate{
-			Country:			cert.Issuer.Country,
-			Organization:		cert.Issuer.Organization,
-			OrganizationalUnit:	cert.Issuer.OrganizationalUnit,
-			Locality:			cert.Issuer.Locality,
-			Province:			cert.Issuer.Province,
-			SerialNumber:		cert.Issuer.SerialNumber,
-			NotBefore:			cert.NotBefore,
-			NotAfter:			cert.NotAfter,								
-		}
+			// Base64 Url Decoding
+			certText, err := base64.URLEncoding.DecodeString(uEnc)
+			if err != nil {
+				return SignatureHeader{}, errors.WithMessage(err,"Error decoding string: ")
+			}
+			
+			end, _ := pem.Decode([]byte(string(certText)))
+			if end == nil {
+				return SignatureHeader{}, errors.New("Error Pem decoding: ")
+			}
+			cert, err := x509.ParseCertificate(end.Bytes)
+			if err != nil {
+				return SignatureHeader{}, errors.New("failed to parse certificate:: ")
+			}		
+
+			certificateJson :=	Certificate{
+				Country:		cert.Issuer.Country,
+				Organization:		cert.Issuer.Organization,
+				OrganizationalUnit:	cert.Issuer.OrganizationalUnit,
+				Locality:		cert.Issuer.Locality,
+				Province:		cert.Issuer.Province,
+				SerialNumber:		cert.Issuer.SerialNumber,
+				NotBefore:		cert.NotBefore,
+				NotAfter:		cert.NotAfter,								
+			}
 
 		creatorJson := Creator {
-			Mspid:  		creator.Mspid,
-			CertText:		string(certText),
+			Mspid:  	creator.Mspid,
+			CertText:	string(certText),
 			Certificate:	certificateJson,
 		}
 
