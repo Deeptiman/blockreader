@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+
 func GetTransactionJson(chaincodeActionPayload *peer.ChaincodeActionPayload) (Transaction, error){
 
 	/*
@@ -93,7 +94,7 @@ func GetChainCodeProposalPayload(chaincodeActionPayload *peer.ChaincodeActionPay
 		}
 	
 		ChaincodeType := [5]string{"UNDEFINED", "GOLANG", "NODE", "CAR", "JAVA"}
-	
+
 		chaincodeSpecJson := ChaincodeSpec{
 			ChaincodeId: 	input.ChaincodeSpec.ChaincodeId.Name,
 			ChaincodeType:  ChaincodeType[input.ChaincodeSpec.Type],
@@ -116,7 +117,6 @@ func GetChainCodeEndorsedAction(chaincodeActionPayload *peer.ChaincodeActionPayl
 
 	/*
 		type ChaincodeEndorsedAction struct {
-
 			ProposalResponsePayload []byte
 			Endorsements  []*Endorsement
 		}
@@ -126,7 +126,6 @@ func GetChainCodeEndorsedAction(chaincodeActionPayload *peer.ChaincodeActionPayl
 
 		/*
 			type ProposalResponsePayload struct {
-
 				ProposalHash []byte
 				Extension    []byte   
 			}
@@ -140,14 +139,46 @@ func GetChainCodeEndorsedAction(chaincodeActionPayload *peer.ChaincodeActionPayl
 
 		proposalHash := sha256.Sum256(proposalResponsePayload.ProposalHash)
 		
-		chaincodeKVRWSetJson, err := GetKVRWSetJson(proposalResponsePayload)
+		// Extension is the marshalled object of ChaincodeAction
+		/*
+			type ChaincodeAction struct {
+				Results  []byte 
+				Events   []byte 
+				Response *Response 
+			}
+		*/
+		chaincodeAction := &peer.ChaincodeAction{}
+		err = proto.Unmarshal(proposalResponsePayload.Extension, chaincodeAction)
+		if err != nil {
+			return ChaincodeEndorsedAction{}, errors.WithMessage(err,"unmarshaling Extension error: ")
+		}
+
+		chaincodeKVRWSetJson, err := GetKVRWSetJson(chaincodeAction)
 		if err != nil {
 			return ChaincodeEndorsedAction{}, errors.WithMessage(err,"failed to get KVRWSet Json error: ")
 		} 
 
+		//Events
+		
+			chaincodeEvent := &peer.ChaincodeEvent{}
+			err = proto.Unmarshal(chaincodeAction.Events, chaincodeEvent)
+			if err != nil {
+				return ChaincodeEndorsedAction{}, errors.WithMessage(err,"unmarshaling Chaincode Events error: ")
+			}
+
+			eventPayload := CToGoString(chaincodeEvent.Payload[:])
+
+			chaincodeEventJson := ChaincodeEvents{
+				ChaincodeId:  chaincodeEvent.ChaincodeId,
+				TxId:	      chaincodeEvent.TxId,
+				EventName:    chaincodeEvent.EventName,
+				Payload:      eventPayload,
+			}
+
 		proposalResponsePayloadJson := ProposalResponsePayload{
-			ProposalHash: 		hex.EncodeToString(proposalHash[:]),
+			ProposalHash:       hex.EncodeToString(proposalHash[:]),
 			ChaincodeKVRWSet:   chaincodeKVRWSetJson,
+			ChaincodeEvents:    chaincodeEventJson,
 		}
 
 		chaincodeEndorsedActionJson := ChaincodeEndorsedAction {
