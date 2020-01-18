@@ -92,9 +92,11 @@ func GetChainCodeProposalPayload(chaincodeActionPayload *peer.ChaincodeActionPay
 			chaincodeArgs[i] = args
 		}
 	
+		ChaincodeType := [5]string{"UNDEFINED", "GOLANG", "NODE", "CAR", "JAVA"}
+	
 		chaincodeSpecJson := ChaincodeSpec{
 			ChaincodeId: 	input.ChaincodeSpec.ChaincodeId.Name,
-			ChaincodeType:  string(input.ChaincodeSpec.Type),
+			ChaincodeType:  ChaincodeType[input.ChaincodeSpec.Type],
 			ChaincodeArgs:	chaincodeArgs,
 		}
 
