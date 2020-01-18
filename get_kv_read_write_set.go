@@ -8,22 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func GetKVRWSetJson(proposalResponsePayload *peer.ProposalResponsePayload)(ChaincodeKVRWSet, error){
-
-	// Extension is the marshalled object of ChaincodeAction
-		/*
-			type ChaincodeAction struct {
-				Results  []byte 
-				Events   []byte 
-				Response *Response 
-			}
-		*/
-	
-		chaincodeAction := &peer.ChaincodeAction{}
-		err := proto.Unmarshal(proposalResponsePayload.Extension, chaincodeAction)
-		if err != nil {
-			return ChaincodeKVRWSet{}, errors.WithMessage(err,"unmarshaling Extension error: ")
-		}
+func GetKVRWSetJson(chaincodeAction *peer.ChaincodeAction)(ChaincodeKVRWSet, error){
 
 		// Results is the marshalled object of TxReadWriteSet
 		/*
@@ -38,7 +23,7 @@ func GetKVRWSetJson(proposalResponsePayload *peer.ProposalResponsePayload)(Chain
 			}
 		*/
 		txReadWriteSet := &rwset.TxReadWriteSet{}
-		err = proto.Unmarshal(chaincodeAction.Results, txReadWriteSet)
+		err := proto.Unmarshal(chaincodeAction.Results, txReadWriteSet)
 		if err != nil {
 			return ChaincodeKVRWSet{}, errors.WithMessage(err,"unmarshaling txReadWriteSet error: ")
 		}
