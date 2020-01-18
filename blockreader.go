@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"	
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
@@ -62,9 +64,37 @@ func BlockReader() error {
 	block, err := QueryBlock(lc)
 	if err != nil {
 		return errors.WithMessage(err, "failed to query block")
-	}	
+	}			
 
 	/********************** READ THE BLOCK **************************/	
+
+	/*		
+		type Block struct {
+			Header   *BlockHeader   
+			Data     *BlockData     
+			Metadata *BlockMetadata 
+		}
+	*/
+
+	//BlockHeader -
+	blockHeader := block.Header
+
+	/*
+		type BlockHeader struct {
+			Number   		uint64
+			PreviousHash    []byte
+			DataHash        []byte
+		}
+	*/
+
+	previousHash := sha256.Sum256(blockHeader.PreviousHash)
+	dataHash := sha256.Sum256(blockHeader.DataHash)
+
+	blockHeaderJson := BlockHeader {
+		Number: 		blockHeader.Number,
+		PreviousHash:	hex.EncodeToString(previousHash[:]),
+		DataHash:		hex.EncodeToString(dataHash[:]),
+	}
 
 	//BlockData - 
 	blockData := block.Data.Data
@@ -95,7 +125,7 @@ func BlockReader() error {
 		return errors.WithMessage(err,"unmarshaling Payload error: ")
 	}
 	
-	payloadJson, err := GetPayloadJson(envelope)
+	payloadJson, err := GetPayloadJson(payload)
 	if err != nil {
 		return errors.WithMessage(err,"unmarshaling Payload error: ")	
 	}
@@ -113,8 +143,6 @@ func BlockReader() error {
 	if err != nil {
 		return errors.WithMessage(err,"unmarshaling Payload Transaction error: ")
 	}
-
-	// The Header is simialr to the Payload Header retrieving the Creator Identity and Nonce //
 
 	// Payload field is marshalled object of ChaincodeActionPayload
 
@@ -150,8 +178,13 @@ func BlockReader() error {
 			Data: 	dataJson,
 		}
 
-		blockReader := Block{
+		blockDataJson := BlockData {
 			Envelope: envelopeJson,
+		}
+
+		blockReader := Block{
+			BlockHeader: blockHeaderJson,
+			BlockData: blockDataJson,
 		}
 
 		fmt.Println("************* JSON FORMAT ************* ")
@@ -214,7 +247,3 @@ func main() {
 	}
 
 }
-
-
-
-
