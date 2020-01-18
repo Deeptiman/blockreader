@@ -6,6 +6,8 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
+	"encoding/json"
+	"encoding/hex"
 	"github.com/hyperledger/fabric-protos-go/ledger/rwset/kvrwset"
 	"github.com/hyperledger/fabric-protos-go/ledger/rwset"
 	"github.com/hyperledger/fabric-protos-go/msp"
@@ -27,7 +29,7 @@ const (
 	OrgAdmin = "Admin"
 	OrgName = "org1"
 	ConfigFile = "config.yaml"
-	TxnID = "3991fec77ed50fb38162dc5c3f7f2f5cce8b7a7471f2894a97193959f2eb24ff"
+	TxnID = "cd2b072c880cdefbea66c5f9d73a5a5eb3c3977e77772fba42cec59204ca2980"
 )
 
 func Initialize() error {
@@ -110,7 +112,6 @@ func BlockReader() error {
 		}
 	*/
 
-
 	// 1. ChannelHeader
 		/*
 			type ChannelHeader struct {
@@ -164,6 +165,26 @@ func BlockReader() error {
 		fmt.Println(" 3. Chaincode Version = "+extension.ChaincodeId.Version)
 		fmt.Println(" *******************************")
 
+
+		chaincodeIdJson := ChaincodeID {
+			Path:		extension.ChaincodeId.Path,
+			Name:		extension.ChaincodeId.Name,
+			Version:	extension.ChaincodeId.Version,
+		}
+
+		chaincodeHeaderExtensionJson := ChaincodeHeaderExtension{
+			ChaincodeId: chaincodeIdJson,	
+		}
+
+		channelHeaderJson := ChannelHeader{
+			Type: 		channelHeader.Type,
+			Version:	channelHeader.Version,
+			ChannelId:	channelHeader.ChannelId,
+			TxId:		channelHeader.TxId,
+			Epoch:		channelHeader.Epoch,
+			Extension:	chaincodeHeaderExtensionJson,
+		}		
+
 	// 2. SignatureHeader
 
 		/*
@@ -191,14 +212,14 @@ func BlockReader() error {
 		uEnc := base64.URLEncoding.EncodeToString([]byte(creator.IdBytes))
 
 		// Base64 Url Decoding
-		uDec, err := base64.URLEncoding.DecodeString(uEnc)
+		certText, err := base64.URLEncoding.DecodeString(uEnc)
 		if err != nil {
 			return errors.WithMessage(err,"Error decoding string: ")
 		}
 		
-		fmt.Println("IdBytes = "+string(uDec))
+		fmt.Println("IdBytes = "+string(certText))
 
-		end, _ := pem.Decode([]byte(string(uDec)))
+		end, _ := pem.Decode([]byte(string(certText)))
 		if end == nil {
 			panic("failed to parse certificate PEM")
 		}
@@ -209,6 +230,31 @@ func BlockReader() error {
 		fmt.Println("Parse Certificate", cert.Issuer, cert.Subject, cert.SerialNumber, cert.NotBefore, cert.NotAfter, cert.PermittedEmailAddresses)
 		
 
+		certificateJson :=	Certificate{
+			Country:			cert.Issuer.Country,
+			Organization:		cert.Issuer.Organization,
+			OrganizationalUnit:	cert.Issuer.OrganizationalUnit,
+			Locality:			cert.Issuer.Locality,
+			Province:			cert.Issuer.Province,
+			SerialNumber:		cert.Issuer.SerialNumber,
+			NotBefore:			cert.NotBefore,
+			NotAfter:			cert.NotAfter,								
+		}
+
+		creatorJson := Creator {
+			Mspid:  		creator.Mspid,
+			CertText:		string(certText),
+			Certificate:	certificateJson,
+		}
+
+		signatureHeaderJson := SignatureHeader {				
+			Creator: creatorJson,
+		}
+
+		payloadJson := Payload {
+			ChannelHeader: 		channelHeaderJson,
+			SignatureHeader:	signatureHeaderJson,
+		}
 
 		// IdBytes SigningIdentityInfo
 		fmt.Println(" *******************************\n")
@@ -250,7 +296,7 @@ func BlockReader() error {
 		return errors.WithMessage(err,"unmarshaling Chaincode Action Payload error: ")
 	}
 
-	// 1. ChanicodeProposalPayload
+	// 1. ChaincodeProposalPayload
 
 		/*
 			type ChaincodeProposalPayload struct {
@@ -292,11 +338,28 @@ func BlockReader() error {
 		fmt.Println("Type = ", input.ChaincodeSpec.Type)
 		fmt.Println("ChaincodeId = "+input.ChaincodeSpec.ChaincodeId.Name)
 		fmt.Println(" --> Read the Chaincode Input Args \n")
+		chaincodeArgs := make([]string, len(input.ChaincodeSpec.Input.Args))
+
 		for i, c := range input.ChaincodeSpec.Input.Args {
 			args := CToGoString(c[:])
+			chaincodeArgs[i] = args
 			fmt.Println(" --[CC Args == ",i," --> "+args, len(c), "]")
 		}
 		fmt.Println(" *********************************** \n\n")
+
+		chaincodeSpecJson := ChaincodeSpec{
+			ChaincodeId: 	input.ChaincodeSpec.ChaincodeId.Name,
+			ChaincodeType:  string(input.ChaincodeSpec.Type),
+			ChaincodeArgs:	chaincodeArgs,
+		}
+
+		chaincodeInvocationSpecJson := ChaincodeInvocationSpec{
+			ChaincodeSpec:  chaincodeSpecJson,
+		}
+
+		chaincodeProposalPayloadJson := ChaincodeProposalPayload {
+			ChaincodeInvocationSpec: chaincodeInvocationSpecJson,
+		}
 
 	//2. Action
 
@@ -413,11 +476,27 @@ func BlockReader() error {
 		fmt.Println(" Namespace = "+nameSpace)
 		fmt.Println(" ****** KV Read Write Set ****** ")
 
+		var versionJson			Version
+		var kvReadJson 			KVRead
+		var kvWriteJson			KVWrite
+		var rangeQueryInfoJson	RangeQueryInfo
+		var kvMetadataWriteJson KVMetadataWrite
+
 		if len(kvrwset.Reads) != 0 {
 			fmt.Println(" ## Read")
 			fmt.Println(" Key = "+kvrwset.Reads[0].Key)
 			fmt.Println(" BlockNum = ", kvrwset.Reads[0].Version.BlockNum)
 			fmt.Println(" TxNum = ", kvrwset.Reads[0].Version.TxNum)
+
+			versionJson = Version{
+				BlockNum: kvrwset.Reads[0].Version.BlockNum,
+				TxNum:  kvrwset.Reads[0].Version.TxNum,
+			}	
+
+			kvReadJson = KVRead{
+				Key: 	 kvrwset.Reads[0].Key,
+				Version: versionJson,
+			}
 		}
 		
 		if len(kvrwset.Writes) != 0 {
@@ -426,6 +505,11 @@ func BlockReader() error {
 			fmt.Println(" IsDelete = ",kvrwset.Writes[0].IsDelete)		
 			value := CToGoString(kvrwset.Writes[0].Value[:])
 			fmt.Println(" Value = "+value)
+
+			kvWriteJson = KVWrite {
+				Key: 		kvrwset.Writes[0].Key,
+				IsDelete: 	kvrwset.Writes[0].IsDelete,
+			}
 		}
 
 		if len(kvrwset.RangeQueriesInfo) != 0 {
@@ -434,6 +518,12 @@ func BlockReader() error {
 			fmt.Println(" End Key = "+kvrwset.RangeQueriesInfo[0].EndKey)
 			fmt.Println(" ItrExhausted = ",kvrwset.RangeQueriesInfo[0].ItrExhausted)
 			fmt.Println(" ReadsInfo = ",kvrwset.RangeQueriesInfo[0].ReadsInfo)
+
+			rangeQueryInfoJson = RangeQueryInfo{
+				StartKey:  kvrwset.RangeQueriesInfo[0].StartKey,
+				EndKey:	   kvrwset.RangeQueriesInfo[0].EndKey,
+				ItrExhausted: kvrwset.RangeQueriesInfo[0].ItrExhausted, 	
+			}
 		}
 
 		if len(kvrwset.MetadataWrites) != 0 {
@@ -442,7 +532,58 @@ func BlockReader() error {
 			fmt.Println(" Name = "+kvrwset.MetadataWrites[0].Entries[0].Name)
 			metadataValue := CToGoString(kvrwset.MetadataWrites[0].Entries[1].Value[:])
 			fmt.Println(" Value = "+metadataValue)
+
+			kvMetadataWriteJson = KVMetadataWrite{
+				Key: 	kvrwset.MetadataWrites[0].Key,
+				Name:	kvrwset.MetadataWrites[0].Entries[0].Name,
+			}
 		}
+
+		chaincodeKVRWSetJson := ChaincodeKVRWSet{
+			Reads: 				kvReadJson,
+			Writes: 			kvWriteJson,
+			RangeQueriesInfo:	rangeQueryInfoJson,
+			MetadataWrites:		kvMetadataWriteJson,
+		}
+
+		proposalResponsePayloadJson := ProposalResponsePayload{
+			ProposalHash: 		hex.EncodeToString(proposalHash[:]),
+			ChaincodeKVRWSet:   chaincodeKVRWSetJson,
+		}
+
+		chaincodeEndorsedActionJson := ChaincodeEndorsedAction {
+			ProposalResponsePayload: proposalResponsePayloadJson,
+		}
+
+		transactionJson := Transaction {
+			ChaincodeProposalPayload: 	chaincodeProposalPayloadJson,
+			ChaincodeEndorsedAction:	chaincodeEndorsedActionJson,
+		}
+
+		headerJson := Header{
+			Payload: payloadJson,
+		}
+
+		dataJson := Data {
+			Transaction: transactionJson,
+		}
+
+		envelopeJson := Envelope {
+			Header: headerJson,
+			Data: 	dataJson,
+		}
+
+		blockReader := Block{
+			Envelope: envelopeJson,
+		}
+
+		fmt.Println("************* JSON FORMAT ************* ")
+		var jsonData []byte
+		jsonData, err = json.MarshalIndent(blockReader, "","    ")
+		if err != nil {
+			errors.WithMessage(err, "failed to marshal Json")
+		}
+		fmt.Println(string(jsonData))
 
 	return nil	
 }
