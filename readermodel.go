@@ -6,9 +6,20 @@ import (
 
 type Block struct {
 
-	Envelope Envelope	`json:envelope`
+	BlockHeader 	BlockHeader `json:block_header`
+	BlockData	BlockData   `json:block_data`
 }
 
+type BlockHeader struct {
+	Number   	uint64	`json:number`
+	PreviousHash    string	`json:previous_hash`	
+	DataHash        string	`json:data_hash`
+}
+
+type BlockData struct {
+
+	Envelope Envelope	`json:envelope`
+}
 
 type Envelope struct {
 
@@ -28,7 +39,7 @@ type Payload struct {
 
 type ChannelHeader struct {
 
-	Type      int32 		`json:type`
+	Type      string 		`json:type`
 	Version   int32 		`json:version`
 	ChannelId string 		`json:channelid`
 	TxId      string 		`json:txid`
@@ -53,17 +64,17 @@ type SignatureHeader struct {
 type Creator struct {
 	Mspid 		string 			`json:mspid`
 	CertText	string			`json:certtext`
-	Certificate Certificate		`json:certificate`
+	Certificate Certificate			`json:certificate`
 }
 
 type Certificate struct {
 
 	Country  			[]string 		`json:country`
-	Organization		[]string		`json:organization`
-	OrganizationalUnit	[]string		`json:organization_unit`
+	Organization			[]string		`json:organization`
+	OrganizationalUnit		[]string		`json:organization_unit`
 	Locality			[]string		`json:locality`
 	Province			[]string		`json:province`
-	SerialNumber		string		`json:serialnumber`
+	SerialNumber			string			`json:serialnumber`
 	NotBefore			time.Time		`json:notbefore`	 
 	NotAfter 			time.Time		`json:notafter`
 }
@@ -101,15 +112,23 @@ type ChaincodeEndorsedAction struct {
 }
 
 type ProposalResponsePayload struct {
-	ProposalHash   		string 				`json:proposal_hash`
+	ProposalHash   		string 			`json:proposal_hash`
 	ChaincodeKVRWSet	ChaincodeKVRWSet	`json:chaincode_kv_rw_set`
+	ChaincodeEvents		ChaincodeEvents		`json:chaincode_events`
+}
+
+type ChaincodeEvents struct {
+	ChaincodeId     string  `json:chaincode_id`
+	TxId			string	`json:txid`
+	EventName		string	`json:eventname`
+	Payload			string 	`json:payload`	
 }
 
 type ChaincodeKVRWSet struct {
 
 	Reads            KVRead         	`json:reads`
 	RangeQueriesInfo RangeQueryInfo 	`json:range_queries_info`
-	Writes           KVWrite  			`json:writes`
+	Writes           KVWrite  		`json:writes`
 	MetadataWrites   KVMetadataWrite	`json:metadata_writes`
 }
 
