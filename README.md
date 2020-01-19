@@ -5,12 +5,11 @@
 <h2> Run the application </h2>
 <ol>
   <li> 
-    Compile the application using following commands
-  <code>    
+    Compile the application using following commands 
                 
-      cd /go/src/github.com/blockreader
-      go build            
-  </code>
+    cd /go/src/github.com/blockreader
+    go build            
+   
  You can see <b>blockreader</b> executable is generated.
   </li>
  
@@ -18,13 +17,13 @@
   
    Now type following commands to read the Block.
   
-   <code>
+   
                 
      ./blockreader -txnId="cd2b072c880cdefbea66c5f9d73a5a5eb3c3977e77772fba42cec59204ca2980" -channelId="employeeledger"            
      -txnId : The transaction id to be query to retrieve the Block for that transaction from the ledger.
      -channelId: The network ChannelId
                 
-  </code>
+  
   </li>
   
   <li>
