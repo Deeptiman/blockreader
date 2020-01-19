@@ -29,7 +29,6 @@
   <li>
    After that, you will see the Block details in a JSON format.
        
-      <code>
         
         ************* BLOCK READER JSON ************* 
                 {
@@ -141,8 +140,6 @@
                     }
                 }
         
-        
-      </code>
   
   </li>
   
