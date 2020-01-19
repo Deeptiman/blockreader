@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"	
+	"flag"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"github.com/hyperledger/fabric-sdk-go/pkg/common/providers/fab"
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
 	contextAPI "github.com/hyperledger/fabric-sdk-go/pkg/common/providers/context"
@@ -17,13 +19,13 @@ import (
 
 var channelCtx	contextAPI.ChannelProvider
 
-const (
+var ChannelID string
+var TxnID string
 
-	ChannelID = "employeeledger"
+const (
 	OrgAdmin = "Admin"
 	OrgName = "org1"
 	ConfigFile = "config.yaml"
-	TxnID = "cd2b072c880cdefbea66c5f9d73a5a5eb3c3977e77772fba42cec59204ca2980"
 )
 
 func Initialize() error {
@@ -81,7 +83,7 @@ func BlockReader() error {
 
 	/*
 		type BlockHeader struct {
-			Number   		uint64
+			Number   	uint64
 			PreviousHash    []byte
 			DataHash        []byte
 		}
@@ -91,9 +93,9 @@ func BlockReader() error {
 	dataHash := sha256.Sum256(blockHeader.DataHash)
 
 	blockHeaderJson := BlockHeader {
-		Number: 		blockHeader.Number,
+		Number: 	blockHeader.Number,
 		PreviousHash:	hex.EncodeToString(previousHash[:]),
-		DataHash:		hex.EncodeToString(dataHash[:]),
+		DataHash:	hex.EncodeToString(dataHash[:]),
 	}
 
 	//BlockData - 
@@ -187,7 +189,7 @@ func BlockReader() error {
 			BlockData: blockDataJson,
 		}
 
-		fmt.Println("************* JSON FORMAT ************* ")
+		fmt.Println("************* BLOCK READER JSON ************* ")
 		var jsonData []byte
 		jsonData, err = json.MarshalIndent(blockReader, "","    ")
 		if err != nil {
@@ -200,7 +202,7 @@ func BlockReader() error {
 
 func QueryBlock(lc *ledger.Client) (*common.Block, error){
 
-	block, err := lc.QueryBlockByTxID(TxnID)
+	block, err := lc.QueryBlockByTxID(fab.TransactionID(TxnID))
 	if err != nil {
 		return nil, errors.WithMessage(err, "failed to query block by transaction ID")
 	}
@@ -236,14 +238,23 @@ func CToGoString(c []byte) string {
 
 func main() {
 
-	err := Initialize()
-	if err != nil {
-		fmt.Println("failed to initialize")
-	}
+	flag.StringVar(&ChannelID, "channelId", "", "add channel name")
+	flag.StringVar(&TxnID, "txnId",  "", "add txnId")
+	flag.Parse()	
 
-	err = BlockReader()
-	if err != nil {
-		fmt.Println(" failed to read the Block - ", err)
+	if len(TxnID)==0 || len(ChannelID) == 0 {
+		fmt.Println("Please add the 'txnId' and 'channelId' to continue...")
+	} else {
+
+		err := Initialize()
+		if err != nil {
+			fmt.Println("failed to initialize")
+		}
+
+		err = BlockReader()
+		if err != nil {
+			fmt.Println(" failed to read the Block - ", err)
+		}
 	}
 
 }
