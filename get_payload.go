@@ -149,12 +149,12 @@ func GetSignatureHeaderJson(signatureHeader *common.SignatureHeader) (SignatureH
 			uEnc := base64.URLEncoding.EncodeToString([]byte(creator.IdBytes))
 
 			// Base64 Url Decoding
-			certText, err := base64.URLEncoding.DecodeString(uEnc)
+			certHash, err := base64.URLEncoding.DecodeString(uEnc)
 			if err != nil {
 				return SignatureHeader{}, errors.WithMessage(err,"Error decoding string: ")
 			}
 			
-			end, _ := pem.Decode([]byte(string(certText)))
+			end, _ := pem.Decode([]byte(string(certHash)))
 			if end == nil {
 				return SignatureHeader{}, errors.New("Error Pem decoding: ")
 			}
@@ -175,9 +175,9 @@ func GetSignatureHeaderJson(signatureHeader *common.SignatureHeader) (SignatureH
 			}
 
 		creatorJson := Creator {
-			Mspid:  	creator.Mspid,
-			CertText:	string(certText),
-			Certificate:	certificateJson,
+			Mspid:  		creator.Mspid,
+			CertHash:		string(certHash),
+			Certificate:		certificateJson,
 		}
 
 		signatureHeaderJson := SignatureHeader {				
