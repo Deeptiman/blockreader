@@ -29,13 +29,28 @@ func GetPayloadJson(payload *common.Payload) (Payload, error){
 	*/
 
 	// 1. ChannelHeader
-		channelHeaderJson, err := GetChannelHeader(payload)	
+
+		channelHeader := &common.ChannelHeader{}
+		err := proto.Unmarshal(payload.Header.ChannelHeader, channelHeader)
+		if err != nil {
+			return Payload{}, errors.WithMessage(err,"unmarshaling Channel Header error: ")
+		}
+
+		channelHeaderJson, err := GetChannelHeaderJson(channelHeader)	
 		if err != nil {
 			return Payload{},  errors.WithMessage(err, "failed get Channel Header")
 		}
 
 	// 2. SignatureHeader
-		signatureHeaderJson, err := GetSignatureHeader(payload)
+
+		// Creator is the marshalled object of msp.SerializedIdentity
+		signatureHeader := &common.SignatureHeader{}
+		err = proto.Unmarshal(payload.Header.SignatureHeader, signatureHeader)
+		if err != nil {
+			return Payload{}, errors.WithMessage(err,"unmarshaling Signature Header error: ")
+		}
+		
+		signatureHeaderJson, err := GetSignatureHeaderJson(signatureHeader)
 		if err != nil {
 			return Payload{}, errors.WithMessage(err, "failed get Signature Header")
 		}
@@ -49,7 +64,7 @@ func GetPayloadJson(payload *common.Payload) (Payload, error){
 }
 
 
-func GetChannelHeader(payload *common.Payload) (ChannelHeader, error) {
+func GetChannelHeaderJson(channelHeader *common.ChannelHeader) (ChannelHeader, error) {
 
 	/*
 			type ChannelHeader struct {
@@ -62,12 +77,7 @@ func GetChannelHeader(payload *common.Payload) (ChannelHeader, error) {
 				Extension []byte 
 			}
 	*/
-	
-		channelHeader := &common.ChannelHeader{}
-		err := proto.Unmarshal(payload.Header.ChannelHeader, channelHeader)
-		if err != nil {
-			return ChannelHeader{}, errors.WithMessage(err,"unmarshaling Channel Header error: ")
-		}
+			
 		// The Exension field marshalled object from ChaincodeHeaderExtension
 
 		/*
@@ -83,9 +93,15 @@ func GetChannelHeader(payload *common.Payload) (ChannelHeader, error) {
 			}
 		*/
 		extension := &peer.ChaincodeHeaderExtension{}
-		err = proto.Unmarshal(channelHeader.Extension, extension)
+		err := proto.Unmarshal(channelHeader.Extension, extension)
 		if err != nil {
 			return ChannelHeader{}, errors.WithMessage(err,"unmarshaling Channel Header error: ")
+		}
+
+		payloadVisibility := &peer.ChaincodeProposalPayload{}
+		err = proto.Unmarshal(extension.PayloadVisibility, payloadVisibility)
+		if err != nil {
+			return ChannelHeader{}, errors.WithMessage(err,"unmarshaling Payload Visibility error: ")
 		}
 
 		chaincodeIdJson := ChaincodeID {
@@ -113,7 +129,7 @@ func GetChannelHeader(payload *common.Payload) (ChannelHeader, error) {
 	return channelHeaderJson, nil
 }
 
-func GetSignatureHeader(payload *common.Payload) (SignatureHeader, error){
+func GetSignatureHeaderJson(signatureHeader *common.SignatureHeader) (SignatureHeader, error){
 
 	/*
 		type SignatureHeader struct {
@@ -122,15 +138,8 @@ func GetSignatureHeader(payload *common.Payload) (SignatureHeader, error){
 		}
 	*/
 
-		// Creator is the marshalled object of msp.SerializedIdentity
-		signatureHeader := &common.SignatureHeader{}
-		err := proto.Unmarshal(payload.Header.SignatureHeader, signatureHeader)
-		if err != nil {
-			return SignatureHeader{}, errors.WithMessage(err,"unmarshaling Signature Header error: ")
-		}
-
 		creator := &msp.SerializedIdentity{}
-		err = proto.Unmarshal(signatureHeader.Creator, creator)
+		err := proto.Unmarshal(signatureHeader.Creator, creator)
 		if err != nil {
 			return SignatureHeader{}, errors.WithMessage(err,"unmarshaling Creator error: ")
 		}
