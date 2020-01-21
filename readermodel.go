@@ -6,12 +6,13 @@ import (
 
 type Block struct {
 
-	BlockHeader 	BlockHeader `json:block_header`
-	BlockData	BlockData   `json:block_data`
+	BlockHeader 	BlockHeader 	`json:block_header`
+	BlockData		BlockData		`json:block_data`
+	BlockMetaData 	BlockMetaData 	`json:block_metadata`
 }
 
 type BlockHeader struct {
-	Number   	uint64	`json:number`
+	Number   		uint64	`json:number`
 	PreviousHash    string	`json:previous_hash`	
 	DataHash        string	`json:data_hash`
 }
@@ -19,6 +20,12 @@ type BlockHeader struct {
 type BlockData struct {
 
 	Envelope Envelope	`json:envelope`
+}
+
+type BlockMetaData struct {
+	Value			[]byte			 `json:value`
+	Signature		[]byte			 `json:signature`
+	SignatureHeader SignatureHeader  `json:signatureheader`
 }
 
 type Envelope struct {
@@ -64,17 +71,17 @@ type SignatureHeader struct {
 type Creator struct {
 	Mspid 		string 			`json:mspid`
 	CertText	string			`json:certtext`
-	Certificate Certificate			`json:certificate`
+	Certificate Certificate		`json:certificate`
 }
 
 type Certificate struct {
 
 	Country  			[]string 		`json:country`
-	Organization			[]string		`json:organization`
-	OrganizationalUnit		[]string		`json:organization_unit`
+	Organization		[]string		`json:organization`
+	OrganizationalUnit	[]string		`json:organization_unit`
 	Locality			[]string		`json:locality`
 	Province			[]string		`json:province`
-	SerialNumber			string			`json:serialnumber`
+	SerialNumber		string		`json:serialnumber`
 	NotBefore			time.Time		`json:notbefore`	 
 	NotAfter 			time.Time		`json:notafter`
 }
@@ -112,7 +119,7 @@ type ChaincodeEndorsedAction struct {
 }
 
 type ProposalResponsePayload struct {
-	ProposalHash   		string 			`json:proposal_hash`
+	ProposalHash   		string 				`json:proposal_hash`
 	ChaincodeKVRWSet	ChaincodeKVRWSet	`json:chaincode_kv_rw_set`
 	ChaincodeEvents		ChaincodeEvents		`json:chaincode_events`
 }
@@ -128,7 +135,7 @@ type ChaincodeKVRWSet struct {
 
 	Reads            KVRead         	`json:reads`
 	RangeQueriesInfo RangeQueryInfo 	`json:range_queries_info`
-	Writes           KVWrite  		`json:writes`
+	Writes           KVWrite  			`json:writes`
 	MetadataWrites   KVMetadataWrite	`json:metadata_writes`
 }
 
@@ -157,6 +164,3 @@ type KVMetadataWrite struct {
 	Key     string		`json:key`
 	Name	string		`json:name`
 }
-
-
-
