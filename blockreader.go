@@ -28,6 +28,15 @@ const (
 	ConfigFile = "config.yaml"
 )
 
+type BlockMetadataIndex int32
+const (
+    BlockMetadataIndex_SIGNATURES          BlockMetadataIndex = 0
+    BlockMetadataIndex_LAST_CONFIG         BlockMetadataIndex = 1 // Deprecated: Do not use.
+    BlockMetadataIndex_TRANSACTIONS_FILTER BlockMetadataIndex = 2
+    BlockMetadataIndex_ORDERER             BlockMetadataIndex = 3 // Deprecated: Do not use.
+    BlockMetadataIndex_COMMIT_HASH         BlockMetadataIndex = 4
+)
+
 func Initialize() error {
 
 	sdk, err := fabsdk.New(config.FromFile(ConfigFile))
@@ -78,12 +87,15 @@ func BlockReader() error {
 		}
 	*/
 
-	//BlockHeader -
+
+
+	/////////////////////////// -> BlockHeader <- //////////////////////////////////
+
 	blockHeader := block.Header
 
 	/*
 		type BlockHeader struct {
-			Number   	uint64
+			Number   		uint64
 			PreviousHash    []byte
 			DataHash        []byte
 		}
@@ -93,12 +105,20 @@ func BlockReader() error {
 	dataHash := sha256.Sum256(blockHeader.DataHash)
 
 	blockHeaderJson := BlockHeader {
-		Number: 	blockHeader.Number,
+		Number: 		blockHeader.Number,
 		PreviousHash:	hex.EncodeToString(previousHash[:]),
-		DataHash:	hex.EncodeToString(dataHash[:]),
+		DataHash:		hex.EncodeToString(dataHash[:]),
 	}
+	//////////////////////////////////////////////////////////////////////////////////
 
-	//BlockData - 
+
+	/////////////////////////// -> BlockData <- ////////////////////////////////// 
+
+	/*
+		type BlockData struct {
+			Data   [][]byte
+		}
+	*/
 	blockData := block.Data.Data
 
 	//First Get the Envelope from the BlockData
@@ -166,29 +186,74 @@ func BlockReader() error {
 		return errors.WithMessage(err,"failed to get Transaction Json error: ")
 	}	 
 		
+	headerJson := Header{
+		Payload: payloadJson,
+	}
 
-		headerJson := Header{
-			Payload: payloadJson,
+	dataJson := Data {
+		Transaction: transactionJson,
+	}
+
+	envelopeJson := Envelope {
+		Header: headerJson,
+		Data: 	dataJson,
+	}
+
+	blockDataJson := BlockData {
+		Envelope: envelopeJson,
+	}
+	//////////////////////////////////////////////////////////////////////////////////
+
+	
+	/////////////////////////// -> BlockMetaData <- //////////////////////////////////
+	
+	blockMetaData := block.Metadata
+	metadata := &common.Metadata{}
+	err = proto.Unmarshal(blockMetaData.Metadata[BlockMetadataIndex_SIGNATURES], metadata)
+	if err != nil {
+		return errors.Wrapf(err, "error unmarshaling metadata")
+	}
+
+	/*
+		type Metadata struct {
+			Value   	[]byte
+			Signatures  []*MetadataSignature
 		}
 
-		dataJson := Data {
-			Transaction: transactionJson,
+		type MetadataSignature struct {
+			SignatureHeader  []byte
+			Signature        []byte
+		}
+	*/
+
+		//value := CToGoString(metadata.Value[:])
+
+		signatureHeader := &common.SignatureHeader{}
+		err = proto.Unmarshal(metadata.Signatures[0].SignatureHeader, signatureHeader)
+		if err != nil {
+			return errors.WithMessage(err,"unmarshaling Signature Header error: ")
 		}
 
-		envelopeJson := Envelope {
-			Header: headerJson,
-			Data: 	dataJson,
+		signatureHeaderJson, err := GetSignatureHeaderJson(signatureHeader)
+		if err != nil {
+			return errors.WithMessage(err, "failed get Signature Header")
 		}
 
-		blockDataJson := BlockData {
-			Envelope: envelopeJson,
+		blockMetaDataJson := BlockMetaData{
+			Value: metadata.Value,
+			Signature: metadata.Signatures[0].Signature,
+			SignatureHeader: signatureHeaderJson,
 		}
+		//////////////////////////////////////////////////////////////////////////////////
+
+
 
 		blockReader := Block{
-			BlockHeader: blockHeaderJson,
-			BlockData: blockDataJson,
+			BlockHeader: 	blockHeaderJson,
+			BlockData: 		blockDataJson,
+			BlockMetaData: 	blockMetaDataJson,
 		}
-
+		
 		fmt.Println("************* BLOCK READER JSON ************* ")
 		var jsonData []byte
 		jsonData, err = json.MarshalIndent(blockReader, "","    ")
