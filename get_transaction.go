@@ -131,6 +131,7 @@ func GetChainCodeEndorsedAction(chaincodeActionPayload *peer.ChaincodeActionPayl
 			}
 		*/
 
+		
 		proposalResponsePayload	:= &peer.ProposalResponsePayload{}
 		err := proto.Unmarshal(chaincodeActionPayload.Action.ProposalResponsePayload, proposalResponsePayload)
 		if err != nil {
@@ -147,6 +148,7 @@ func GetChainCodeEndorsedAction(chaincodeActionPayload *peer.ChaincodeActionPayl
 				Response *Response 
 			}
 		*/
+
 		chaincodeAction := &peer.ChaincodeAction{}
 		err = proto.Unmarshal(proposalResponsePayload.Extension, chaincodeAction)
 		if err != nil {
@@ -169,14 +171,14 @@ func GetChainCodeEndorsedAction(chaincodeActionPayload *peer.ChaincodeActionPayl
 			eventPayload := CToGoString(chaincodeEvent.Payload[:])
 
 			chaincodeEventJson := ChaincodeEvents{
-				ChaincodeId:  chaincodeEvent.ChaincodeId,
-				TxId:	      chaincodeEvent.TxId,
-				EventName:    chaincodeEvent.EventName,
-				Payload:      eventPayload,
+				ChaincodeId:  	chaincodeEvent.ChaincodeId,
+				TxId:		chaincodeEvent.TxId,
+				EventName:	chaincodeEvent.EventName,
+				Payload:	eventPayload,
 			}
 
 		proposalResponsePayloadJson := ProposalResponsePayload{
-			ProposalHash:       hex.EncodeToString(proposalHash[:]),
+			ProposalHash: 	    hex.EncodeToString(proposalHash[:]),
 			ChaincodeKVRWSet:   chaincodeKVRWSetJson,
 			ChaincodeEvents:    chaincodeEventJson,
 		}
