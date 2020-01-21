@@ -225,9 +225,7 @@ func BlockReader() error {
 			Signature        []byte
 		}
 	*/
-
-		//value := CToGoString(metadata.Value[:])
-
+		
 		signatureHeader := &common.SignatureHeader{}
 		err = proto.Unmarshal(metadata.Signatures[0].SignatureHeader, signatureHeader)
 		if err != nil {
