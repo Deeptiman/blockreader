@@ -31,65 +31,65 @@
   <li>
    After that, you will see the Block details in a JSON format.
        
-     ************* BLOCK READER JSON ************* 
+    ************* BLOCK READER JSON ************* 
     {
         "BlockHeader": {
-            "Number": 2,
-            "PreviousHash": "2e8ddbf2dfd6b90fdadd0f2653f932f9f8bb7922244f991b66fc9ebeff3c63c1",
-            "DataHash": "6df36db3c31ac485754d7e840574bf53639539d9b810c433cec143fe234557e8"
+            "number": 2,
+            "previous_hash": "2e8ddbf2dfd6b90fdadd0f2653f932f9f8bb7922244f991b66fc9ebeff3c63c1",
+            "data_hash": "6df36db3c31ac485754d7e840574bf53639539d9b810c433cec143fe234557e8"
         },
         "BlockData": {
-            "Envelope": {
-                "Header": {
+            "envelope": {
+                "header": {
                     "payload": {
-                        "ChannelHeader": {
-                            "Type": "ENDORSER_TRANSACTION",
-                            "Version": 0,
-                            "ChannelId": "employeeledger",
-                            "TxId": "c3d95a4e5606cae3a1aabced9fe532f7f628b2930eb09452f2b0db62f6e6ee0b",
-                            "Epoch": 0,
-                            "Extension": {
-                                "ChaincodeId": {
-                                    "Path": "",
-                                    "Name": "employeeledger",
-                                    "Version": ""
+                        "channel_header": {
+                            "type": "ENDORSER_TRANSACTION",
+                            "version": 0,
+                            "channelid": "employeeledger",
+                            "txid": "c3d95a4e5606cae3a1aabced9fe532f7f628b2930eb09452f2b0db62f6e6ee0b",
+                            "epoch": 0,
+                            "extension": {
+                                "chaincode_id": {
+                                    "path": "",
+                                    "name": "employeeledger",
+                                    "version": ""
                                 }
                             }
                         },
-                        "SignatureHeader": {
-                            "Creator": {
-                                "Mspid": "org1.employee.ledger.com",
-                                "CertText": "-----BEGIN CERTIFICATE-----\nMIICyjCCAnGgAwIBAgIUGjzRUXjNaP8bpU/9B2xjpDRPWRYwCgYIKoZIzj0EAwIw\ngYMxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1T\nYW4gRnJhbmNpc2NvMSEwHwYDVQQKExhvcmcxLmVtcGxveWVlLmxlZGdlci5jb20x\nJDAiBgNVBAMTG2NhLm9yZzEuZW1wbG95ZWUubGVkZ2VyLmNvbTAeFw0yMDAxMTky\nMDE3MDBaFw0yMTAxMTgyMDIyMDBaMDYxGjALBgNVBAsTBHVzZXIwCwYDVQQLEwRv\ncmcxMRgwFgYDVQQDDA90ZXN0MUBnbWFpbC5jb20wWTATBgcqhkjOPQIBBggqhkjO\nPQMBBwNCAARifA6/HyRpmvTk6oNRCeB8QRWgysaxIxaTd36YHgTqFWlSA0oUE2PI\n2HZ7EiY/AOixTtQGzrAoxYgwpz219LBLo4IBDTCCAQkwDgYDVR0PAQH/BAQDAgeA\nMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFEvpcBUx2KVrXK3HJ/d7wLbYOsWRMCsG\nA1UdIwQkMCKAIGDnIjkscY/5fSt5a+QeZtR7sLnSYbI6t10GiS1huLBJMCQGA1Ud\nEQQdMBuCGWRlZXB0aW1hbnBjLUxlbm92by1HNTAtNDUwdwYIKgMEBQYHCAEEa3si\nYXR0cnMiOnsiaGYuQWZmaWxpYXRpb24iOiJvcmcxIiwiaGYuRW5yb2xsbWVudElE\nIjoidGVzdDFAZ21haWwuY29tIiwiaGYuVHlwZSI6InVzZXIiLCJ1c2VybW9kZSI6\nIkFkbWluIn19MAoGCCqGSM49BAMCA0cAMEQCIDUqcBCkezNYkoOpXzJb5F7ZMsaF\nkamc0bRNCLZy4nlSAiBYodLyCs7iivVonEn49L5GaH7c6zUmQw1hcL9AoGttVw==\n-----END CERTIFICATE-----\n",
-                                "Certificate": {
-                                    "Country": [
+                        "signature_header": {
+                            "creator": {
+                                "msp_id": "org1.employee.ledger.com",
+                                "cert_hash": "-----BEGIN CERTIFICATE-----\nMIICyjCCAnGgAwIBAgIUGjzRUXjNaP8bpU/9B2xjpDRPWRYwCgYIKoZIzj0EAwIw\ngYMxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1T\nYW4gRnJhbmNpc2NvMSEwHwYDVQQKExhvcmcxLmVtcGxveWVlLmxlZGdlci5jb20x\nJDAiBgNVBAMTG2NhLm9yZzEuZW1wbG95ZWUubGVkZ2VyLmNvbTAeFw0yMDAxMTky\nMDE3MDBaFw0yMTAxMTgyMDIyMDBaMDYxGjALBgNVBAsTBHVzZXIwCwYDVQQLEwRv\ncmcxMRgwFgYDVQQDDA90ZXN0MUBnbWFpbC5jb20wWTATBgcqhkjOPQIBBggqhkjO\nPQMBBwNCAARifA6/HyRpmvTk6oNRCeB8QRWgysaxIxaTd36YHgTqFWlSA0oUE2PI\n2HZ7EiY/AOixTtQGzrAoxYgwpz219LBLo4IBDTCCAQkwDgYDVR0PAQH/BAQDAgeA\nMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFEvpcBUx2KVrXK3HJ/d7wLbYOsWRMCsG\nA1UdIwQkMCKAIGDnIjkscY/5fSt5a+QeZtR7sLnSYbI6t10GiS1huLBJMCQGA1Ud\nEQQdMBuCGWRlZXB0aW1hbnBjLUxlbm92by1HNTAtNDUwdwYIKgMEBQYHCAEEa3si\nYXR0cnMiOnsiaGYuQWZmaWxpYXRpb24iOiJvcmcxIiwiaGYuRW5yb2xsbWVudElE\nIjoidGVzdDFAZ21haWwuY29tIiwiaGYuVHlwZSI6InVzZXIiLCJ1c2VybW9kZSI6\nIkFkbWluIn19MAoGCCqGSM49BAMCA0cAMEQCIDUqcBCkezNYkoOpXzJb5F7ZMsaF\nkamc0bRNCLZy4nlSAiBYodLyCs7iivVonEn49L5GaH7c6zUmQw1hcL9AoGttVw==\n-----END CERTIFICATE-----\n",
+                                "certificate": {
+                                    "country": [
                                         "US"
                                     ],
-                                    "Organization": [
+                                    "organization": [
                                         "org1.employee.ledger.com"
                                     ],
-                                    "OrganizationalUnit": null,
-                                    "Locality": [
+                                    "organization_unit": null,
+                                    "locality": [
                                         "San Francisco"
                                     ],
-                                    "Province": [
+                                    "province": [
                                         "California"
                                     ],
-                                    "SerialNumber": "",
-                                    "NotBefore": "2020-01-19T20:17:00Z",
-                                    "NotAfter": "2021-01-18T20:22:00Z"
+                                    "serial_number": "",
+                                    "not_before": "2020-01-19T20:17:00Z",
+                                    "not_after": "2021-01-18T20:22:00Z"
                                 }
                             }
                         }
                     }
                 },
-                "Data": {
-                    "Transaction": {
-                        "ChaincodeProposalPayload": {
-                            "ChaincodeInvocationSpec": {
-                                "ChaincodeSpec": {
-                                    "ChaincodeId": "employeeledger",
-                                    "ChaincodeType": "GOLANG",
-                                    "ChaincodeArgs": [
+                "data": {
+                    "transaction": {
+                        "chaincode_proposal_payload": {
+                            "chaincode_invocation_spec": {
+                                "chaincode_spec": {
+                                    "chaincode_id": "employeeledger",
+                                    "chaincode_type": "GOLANG",
+                                    "chaincode_args": [
                                         "invoke",
                                         "createUser",
                                         "Deeptiman Pattnaik",
@@ -102,36 +102,36 @@
                                 }
                             }
                         },
-                        "ChaincodeEndorsedAction": {
-                            "ProposalResponsePayload": {
-                                "ProposalHash": "0597a5c323fa68d26e3063ccf640f8658c19f80454b573866cf0614fc2d57f11",
-                                "ChaincodeKVRWSet": {
-                                    "Reads": {
+                        "chaincode_endorsed_action": {
+                            "proposal_response_payload": {
+                                "proposal_hash": "0597a5c323fa68d26e3063ccf640f8658c19f80454b573866cf0614fc2d57f11",
+                                "chaincode_kv_rw_set": {
+                                    "reads": {
                                         "Key": "employeeledger",
-                                        "Version": {
-                                            "BlockNum": 1,
-                                            "TxNum": 0
+                                        "version": {
+                                            "block_num": 1,
+                                            "txnum": 0
                                         }
                                     },
-                                    "RangeQueriesInfo": {
-                                        "StartKey": "",
-                                        "EndKey": "",
-                                        "ItrExhausted": false
+                                    "range_queries_info": {
+                                        "startkey": "",
+                                        "endkey": "",
+                                        "itr_exhausted": false
                                     },
-                                    "Writes": {
-                                        "Key": "",
-                                        "IsDelete": false
+                                    "writes": {
+                                        "key": "",
+                                        "is_delete": false
                                     },
-                                    "MetadataWrites": {
-                                        "Key": "",
-                                        "Name": ""
+                                    "metadata_writes": {
+                                        "key": "",
+                                        "name": ""
                                     }
                                 },
-                                "ChaincodeEvents": {
-                                    "ChaincodeId": "employeeledger",
-                                    "TxId": "c3d95a4e5606cae3a1aabced9fe532f7f628b2930eb09452f2b0db62f6e6ee0b",
-                                    "EventName": "addUserInvoke",
-                                    "Payload": ""
+                                "chaincode_events": {
+                                    "chaincode_id": "employeeledger",
+                                    "txid": "c3d95a4e5606cae3a1aabced9fe532f7f628b2930eb09452f2b0db62f6e6ee0b",
+                                    "event_name": "addUserInvoke",
+                                    "payload": ""
                                 }
                             }
                         }
@@ -140,29 +140,29 @@
             }
         },
         "BlockMetaData": {
-            "Value": null,
-            "Signature": "MEQCICshHeJiB1d1SdBmOyVaQLBrgmAOsrxwEEUO3ZkbB/gDAiAuGcyGDC/i8ExrfZg0p5zzSP/HnBODqSOe5kucVA0ZQg==",
-            "SignatureHeader": {
-                "Creator": {
-                    "Mspid": "employee.ledger.com",
-                    "CertText": "-----BEGIN CERTIFICATE-----\nMIICJDCCAcqgAwIBAgIQCNM0iKIvFrsC0jQGmS98nzAKBggqhkjOPQQDAjB5MQsw\nCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy\nYW5jaXNjbzEcMBoGA1UEChMTZW1wbG95ZWUubGVkZ2VyLmNvbTEfMB0GA1UEAxMW\nY2EuZW1wbG95ZWUubGVkZ2VyLmNvbTAeFw0yMDAxMTgwODA0MDFaFw0zMDAxMTUw\nODA0MDFaMGAxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYD\nVQQHEw1TYW4gRnJhbmNpc2NvMSQwIgYDVQQDExtvcmRlcmVyLmVtcGxveWVlLmxl\nZGdlci5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASmE81Sa568qPkJHZR5\nsHtTpF7cLqyhNiHg8Qroq1xlZrdUNxBhIKpT1KMEWA8N1e2sr8HgTLZCL+6s/AHp\nKUXRo00wSzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADArBgNVHSMEJDAi\ngCDdKLH7Qvi6j2qO/O4Qb9iZHSAxS1KcLt/XePcoVfHz4jAKBggqhkjOPQQDAgNI\nADBFAiEA2i5wlHfoVlpPKVTinqcO6a9mqmWoPVf67f6V9XV16kICIDhgn18/hRXD\n7PYTnIUfx6l7ruLU+LuJywzxkKD0AScR\n-----END CERTIFICATE-----\n",
-                    "Certificate": {
-                        "Country": [
+            "value": null,
+            "signature": "MEQCICshHeJiB1d1SdBmOyVaQLBrgmAOsrxwEEUO3ZkbB/gDAiAuGcyGDC/i8ExrfZg0p5zzSP/HnBODqSOe5kucVA0ZQg==",
+            "signature_header": {
+                "creator": {
+                    "msp_id": "employee.ledger.com",
+                    "cert_hash": "-----BEGIN CERTIFICATE-----\nMIICJDCCAcqgAwIBAgIQCNM0iKIvFrsC0jQGmS98nzAKBggqhkjOPQQDAjB5MQsw\nCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy\nYW5jaXNjbzEcMBoGA1UEChMTZW1wbG95ZWUubGVkZ2VyLmNvbTEfMB0GA1UEAxMW\nY2EuZW1wbG95ZWUubGVkZ2VyLmNvbTAeFw0yMDAxMTgwODA0MDFaFw0zMDAxMTUw\nODA0MDFaMGAxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYD\nVQQHEw1TYW4gRnJhbmNpc2NvMSQwIgYDVQQDExtvcmRlcmVyLmVtcGxveWVlLmxl\nZGdlci5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASmE81Sa568qPkJHZR5\nsHtTpF7cLqyhNiHg8Qroq1xlZrdUNxBhIKpT1KMEWA8N1e2sr8HgTLZCL+6s/AHp\nKUXRo00wSzAOBgNVHQ8BAf8EBAMCB4AwDAYDVR0TAQH/BAIwADArBgNVHSMEJDAi\ngCDdKLH7Qvi6j2qO/O4Qb9iZHSAxS1KcLt/XePcoVfHz4jAKBggqhkjOPQQDAgNI\nADBFAiEA2i5wlHfoVlpPKVTinqcO6a9mqmWoPVf67f6V9XV16kICIDhgn18/hRXD\n7PYTnIUfx6l7ruLU+LuJywzxkKD0AScR\n-----END CERTIFICATE-----\n",
+                    "certificate": {
+                        "country": [
                             "US"
                         ],
-                        "Organization": [
+                        "organization": [
                             "employee.ledger.com"
                         ],
-                        "OrganizationalUnit": null,
-                        "Locality": [
+                        "organization_unit": null,
+                        "locality": [
                             "San Francisco"
                         ],
-                        "Province": [
+                        "province": [
                             "California"
                         ],
-                        "SerialNumber": "",
-                        "NotBefore": "2020-01-18T08:04:01Z",
-                        "NotAfter": "2030-01-15T08:04:01Z"
+                        "serial_number": "",
+                        "not_before": "2020-01-18T08:04:01Z",
+                        "not_after": "2030-01-15T08:04:01Z"
                     }
                 }
             }
