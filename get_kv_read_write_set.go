@@ -28,8 +28,7 @@ func GetKVRWSetJson(chaincodeAction *peer.ChaincodeAction)(ChaincodeKVRWSet, err
 			return ChaincodeKVRWSet{}, errors.WithMessage(err,"unmarshaling txReadWriteSet error: ")
 		}
 
-		//nameSpace := txReadWriteSet.NsRwset[0].Namespace
-		RwSet := txReadWriteSet.NsRwset[1].Rwset
+		RwSet := txReadWriteSet.NsRwset[0].Rwset
 
 		//RwSet is the marshalled object of KVRWSet
 		/*
