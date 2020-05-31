@@ -169,4 +169,5 @@
         }
     }
   </li>
-  
+<h2>License</h2>
+<p>This project is licensed under the <a href="https://github.com/Deeptiman/blockreader/blob/master/LICENSE">MIT License</a></p>
