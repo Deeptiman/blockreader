@@ -1,4 +1,5 @@
 <h1>BlockReader</h1>
+<p>     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Deeptiman/blockreader">  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/Deeptiman/blockreader"> <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Deeptiman/blockreader"></p>
 <p><a href="https://www.hyperledger.org/projects/fabric"><img src="https://www.hyperledger.org/wp-content/uploads/2016/09/logo_hl_new.png" alt="N|Solid"></a></p>
 <p><b>BlockReader</b> application extract and showcase the complete data structure of a Block that contains several details for a transaction. The application will require a transaction id to query the ledger to retrieve the associated block. Then the application will follow the Block data structure to read the content of the Block.</p>
 <p><b>Medium writeup : </b><a href="https://medium.com/@deeptiman/whats-inside-the-block-in-hyperledger-fabric-69a0934fef08">https://medium.com/@deeptiman/whats-inside-the-block-in-hyperledger-fabric-69a0934fef08</a>
